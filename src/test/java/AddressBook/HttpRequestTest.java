@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class HttpRequestTest {
 
     @LocalServerPort
-    private int port = 9000;
+    private int port;
 
     @Autowired
     private TestRestTemplate restTemplate;
