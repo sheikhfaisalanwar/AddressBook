@@ -1,17 +1,28 @@
 package AddressBook;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import AddressBook.BuddyRepository.*;
+import AddressBook.AddressBookRepository;
+
+import javax.annotation.PostConstruct;
 
 
 @Controller
 public class AddressBookController {
+    @Autowired
+    private AddressBookRepository addressBookRepository;
+    @Autowired
+    private BuddyRepository repository;
+    private AddressBook book;
+
+
     @RequestMapping("/newBook")
     public String create( Model model) {
-        AddressBook book = new AddressBook();
-        model.addAttribute("book", book);
         return "newBook";
     }
 
@@ -23,14 +34,21 @@ public class AddressBookController {
         return "newBuddy";
     }
 
-   @RequestMapping(value = "/newBuddy", method=RequestMethod.POST)
-    public String createBuddy(@ModelAttribute BuddyInfo buddy){
-        return "result";
+   @RequestMapping(value = "/", method=RequestMethod.GET)
+    public String Home(ModelMap model){
+        return "index";
    }
-//    @RequestMapping(value = "/result", method=RequestMethod.POST)
-//    public String addBuddy(@ModelAttribute BuddyInfo buddy){
-//        return "result";
-//    }
+
+   @RequestMapping(value = "/newBuddy", method=RequestMethod.POST)
+    public String createBuddy(@ModelAttribute("buddy") BuddyInfo buddy, Model model){
+        book =  addressBookRepository.findOne(1L);
+        book.addBuddy(buddy);
+        buddy.setAddressBook(book);
+        repository.save(buddy);
+        addressBookRepository.save(book);
+        return "result";
+    }
+
 
 
 }
